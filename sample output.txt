@@ -1,0 +1,36 @@
+ROAD ACCIDENT SEVERITY PREDICTOR - SAMPLE OUTPUT
+===============================================================
+
+Dataset records       : 1200
+Training records      : 960
+Testing records       : 240
+Algorithm             : Random Forest Classifier
+Number of trees       : 150
+Maximum tree depth    : 10
+Preprocessing         : One-Hot Encoding
+Test accuracy         : 55.00%
+
+SAMPLE INPUT
+---------------------------------------------------------------
+Weather              : Rain
+Road Type            : Highway
+Light Condition      : Night
+Road Surface         : Wet
+Speed                : 85 km/h
+Vehicles Involved    : 3
+Visibility           : 3 km
+Traffic Density      : High
+Alcohol Involvement  : Yes
+
+PREDICTION
+---------------------------------------------------------------
+Predicted Severity   : Severe
+
+Prediction probabilities:
+Minor               : 7.78%
+Moderate            : 22.43%
+Severe              : 69.79%
+
+NOTE:
+The values above are generated from the dataset packaged with this ZIP.
+The result can change if the CSV is replaced with another dataset.

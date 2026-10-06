@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road Accident Severity Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">RA</div>
+            <div>
+                <strong>Accident AI</strong>
+                <span>Severity Predictor</span>
+            </div>
+        </div>
+
+        <nav>
+            <button class="nav-item active" data-section="dashboard">
+                <span>▦</span> Dashboard
+            </button>
+            <button class="nav-item" data-section="predictor">
+                <span>◉</span> Prediction
+            </button>
+            <button class="nav-item" data-section="analytics">
+                <span>◒</span> Analytics
+            </button>
+            <button class="nav-item" data-section="about">
+                <span>ⓘ</span> About Model
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="model-status">
+                <span class="status-dot" id="statusDot"></span>
+                <div>
+                    <b id="statusText">Checking model...</b>
+                    <small>Random Forest</small>
+                </div>
+            </div>
+            <div class="version">Academic Mini Project · 2026</div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">AI-POWERED ROAD SAFETY</p>
+                <h1 id="pageTitle">Dashboard Overview</h1>
+            </div>
+            <div class="top-actions">
+                <span class="live-badge"><i></i> MODEL ONLINE</span>
+                <div class="avatar">AG</div>
+            </div>
+        </header>
+
+        <section id="dashboard" class="page-section active-section">
+            <div class="hero">
+                <div>
+                    <div class="hero-kicker">ROAD ACCIDENT SEVERITY PREDICTOR</div>
+                    <h2>Turn accident conditions into an <em>AI-assisted severity estimate.</em></h2>
+                    <p>Analyze environmental and road conditions using the trained Random Forest classification model.</p>
+                    <button class="primary-btn" onclick="showSection('predictor')">
+                        Start Prediction <span>→</span>
+                    </button>
+                </div>
+                <div class="hero-visual">
+                    <div class="road-line"></div>
+                    <div class="radar-ring r1"></div>
+                    <div class="radar-ring r2"></div>
+                    <div class="radar-dot"></div>
+                    <span class="road-label">AI</span>
+                </div>
+            </div>
+
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-icon blue">Σ</div>
+                    <div><span>Total Records</span><strong id="totalRecords">—</strong><small>Dataset observations</small></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon green">✓</div>
+                    <div><span>Model Accuracy</span><strong id="accuracy">—</strong><small>Held-out test set</small></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon orange">↗</div>
+                    <div><span>Avg. Speed</span><strong id="avgSpeed">—</strong><small>km/h across records</small></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon purple">◌</div>
+                    <div><span>Avg. Visibility</span><strong id="avgVisibility">—</strong><small>km across records</small></div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="panel">
+                    <div class="panel-head">
+                        <div><h3>Severity Distribution</h3><p>Observed classes in the dataset</p></div>
+                        <span class="panel-tag">LIVE DATA</span>
+                    </div>
+                    <div id="severityBars" class="bars"></div>
+                </div>
+
+                <div class="panel insight-panel">
+                    <div class="panel-head">
+                        <div><h3>Quick Insight</h3><p>Project model profile</p></div>
+                    </div>
+                    <div class="insight">
+                        <div class="insight-number">150</div>
+                        <div><b>Decision Trees</b><span>Random Forest estimators used by the predictor.</span></div>
+                    </div>
+                    <div class="insight-row"><span>Preprocessing</span><b>One-Hot Encoding</b></div>
+                    <div class="insight-row"><span>Classes</span><b>Minor · Moderate · Severe</b></div>
+                    <div class="insight-row"><span>Features</span><b>9 accident conditions</b></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="predictor" class="page-section">
+            <div class="section-intro">
+                <div>
+                    <p class="eyebrow">PREDICTION ENGINE</p>
+                    <h2>Assess an accident scenario</h2>
+                    <p>Enter the same nine features used by the trained Python model.</p>
+                </div>
+                <div class="confidence-chip">● Random Forest · 150 trees</div>
+            </div>
+
+            <div class="predict-layout">
+                <form id="predictionForm" class="prediction-form">
+                    <div class="form-section">
+                        <div class="form-section-title"><span>01</span> Environmental Conditions</div>
+                        <div class="form-grid">
+                            <label>Weather
+                                <select name="Weather">
+                                    <option>Clear</option><option>Rain</option><option>Fog</option><option>Storm</option>
+                                </select>
+                            </label>
+                            <label>Light Condition
+                                <select name="Light_Condition">
+                                    <option>Daylight</option><option>Night</option><option>Dawn/Dusk</option>
+                                </select>
+                            </label>
+                            <label>Road Surface
+                                <select name="Road_Surface">
+                                    <option>Dry</option><option>Wet</option><option>Icy</option>
+                                </select>
+                            </label>
+                            <label>Visibility (km)
+                                <input type="number" name="Visibility_km" value="8" min="0.1" step="0.1">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title"><span>02</span> Road & Traffic Conditions</div>
+                        <div class="form-grid">
+                            <label>Road Type
+                                <select name="Road_Type">
+                                    <option>Highway</option><option>City</option><option>Rural</option><option>Intersection</option>
+                                </select>
+                            </label>
+                            <label>Traffic Density
+                                <select name="Traffic_Density">
+                                    <option>Low</option><option selected>Medium</option><option>High</option>
+                                </select>
+                            </label>
+                            <label>Speed (km/h)
+                                <input type="number" name="Speed_kmph" value="50" min="1" step="1">
+                            </label>
+                            <label>Vehicles Involved
+                                <input type="number" name="Vehicles_Involved" value="2" min="1" step="1">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title"><span>03</span> Driver Factor</div>
+                        <div class="form-grid one-row">
+                            <label>Alcohol Involvement
+                                <select name="Alcohol_Involvement">
+                                    <option>No</option><option>Yes</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="secondary-btn" id="sampleBtn">Load Demo Case</button>
+                        <button type="submit" class="primary-btn">Predict Severity <span>→</span></button>
+                    </div>
+                    <div id="formError" class="form-error"></div>
+                </form>
+
+                <div class="result-card" id="resultCard">
+                    <div class="result-empty">
+                        <div class="result-icon">◎</div>
+                        <h3>Prediction Result</h3>
+                        <p>Complete the scenario and click <b>Predict Severity</b> to run the model.</p>
+                    </div>
+                    <div class="result-content hidden" id="resultContent">
+                        <div class="result-label">PREDICTED SEVERITY</div>
+                        <div class="severity-result" id="severityResult">—</div>
+                        <div class="result-sub">Model confidence by class</div>
+                        <div id="probabilityList"></div>
+                        <div class="result-note">Prediction is for academic demonstration and should not be used for emergency or legal decisions.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analytics" class="page-section">
+            <div class="section-intro">
+                <div>
+                    <p class="eyebrow">DATA ANALYTICS</p>
+                    <h2>Dataset snapshot</h2>
+                    <p>Simple, presentation-ready statistics generated directly from your CSV.</p>
+                </div>
+            </div>
+            <div class="analytics-grid">
+                <div class="panel large-panel">
+                    <div class="panel-head"><div><h3>Weather Distribution</h3><p>Top observed weather categories</p></div></div>
+                    <div id="weatherBars" class="bars"></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-head"><div><h3>Average Conditions</h3><p>Across all accident records</p></div></div>
+                    <div class="big-stat"><span>Vehicles / Accident</span><b id="avgVehicles">—</b></div>
+                    <div class="big-stat"><span>Speed</span><b id="avgSpeed2">—</b></div>
+                    <div class="big-stat"><span>Visibility</span><b id="avgVisibility2">—</b></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="page-section">
+            <div class="section-intro">
+                <div>
+                    <p class="eyebrow">MODEL INFORMATION</p>
+                    <h2>How the predictor works</h2>
+                    <p>A clean web interface over the same machine-learning approach used in your original Python project.</p>
+                </div>
+            </div>
+            <div class="about-grid">
+                <div class="panel">
+                    <div class="step"><span>01</span><div><b>Load dataset</b><p>Reads <code>road_accident_data.csv</code> and separates the Severity target.</p></div></div>
+                    <div class="step"><span>02</span><div><b>Preprocess</b><p>Categorical features are transformed using One-Hot Encoding.</p></div></div>
+                    <div class="step"><span>03</span><div><b>Train Random Forest</b><p>Uses 150 trees, random_state 42 and max_depth 10.</p></div></div>
+                    <div class="step"><span>04</span><div><b>Predict</b><p>The nine entered conditions are passed through the same pipeline.</p></div></div>
+                </div>
+                <div class="panel tech-panel">
+                    <h3>Technology Stack</h3>
+                    <div class="tech-list"><span>Python</span><span>Flask</span><span>Pandas</span><span>Scikit-learn</span><span>HTML5</span><span>CSS3</span><span>JavaScript</span></div>
+                    <div class="disclaimer">Academic mini-project. The dashboard demonstrates machine-learning classification and is not a real-world emergency decision system.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
